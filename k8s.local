@@ -1,0 +1,88 @@
+#config repo before download
+sudo cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-\$basearch
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+exclude=kubelet kubeadm kubectl
+EOF
+sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+sudo systemctl enable kubelet && sudo systemctl start kubelet
+
+sudo swapoff -a
+# Set SELinux in permissive mode (effectively disabling it)
+sudo setenforce 0
+sudo sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+grep disabled /etc/selinux/config | grep -v ‘#’
+
+sudo cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+sudo cat << EOF | sudo tee /proc/sys/net/bridge/bridge-nf-call-iptables
+1
+EOF
+sudo cat << EOF | sudo tee /proc/sys/net/ipv4/ip_forward
+1
+EOF
+sudo sysctl net.bridge.bridge-nf-call-ip6tables=1
+sudo sysctl net.bridge.bridge-nf-call-iptables=1
+sudo sysctl --system
+
+sudo systemctl stop firewalld
+sudo systemctl disable firewalld
+
+lsmod | grep br_netfilter
+sudo modprobe br_netfilter
+
+#TCP	Inbound	6443*	Kubernetes API server	All
+#TCP	Inbound	2379-2380	etcd server client API	kube-apiserver, etcd
+#TCP	Inbound	10250	Kubelet API	Self, Control plane
+#TCP	Inbound	10251	kube-scheduler	Self
+#TCP	Inbound	10252	kube-controller-manager	Self
+#TCP	Inbound	10250	Kubelet API	Self, Control plane
+#TCP	Inbound	30000-32767	NodePort Services†	All
+
+sudo cat /sys/class/dmi/id/product_uuid
+sudo kubeadm init —pod-network-cidr=10.240.0.0/16
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+export KUBECONFIG=/etc/kubernetes/admin.conf
+
+kubectl get pods —all-namespaces
+kubeadm join —token jhkkjhjks —discovery0token-ca-cert-hashsha256:
+
+kubeadm token create —print-join-command
+kubectl get no
+kubectl run kubernetes-bootcamp —image=gcr.io/google-samples/kubernetes-bootcamp:v1 —port=8080
+kubectl get po -o wide
+
+#Flannel For Kubernetes v1.7+ 
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/k8s-manifests/kube-flannel-rbac.yml
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/k8s-manifests/kube-flannel-legacy.yml
+
+#calico
+kubeadm init --pod-network-cidr=192.168.0.0/16
+curl https://docs.projectcalico.org/manifests/calico.yaml -O
+kubectl apply -f calico.yaml
+
+
+
+
+###################################################
+###################################################
+
+mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+Then you can join any number of worker nodes by running the following on each as root:
+kubeadm join 10.128.15.200:6443 --token taw7d9.73i1acb0kg1r4dmg \
+    --discovery-token-ca-cert-hash sha256:f581a7e7183740721bbeda209917b5c6690d5a585d22dfc757e1849f70b62807

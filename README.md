@@ -1,2 +1,1 @@
-# hyperledger-prereqs
-hyperledger-prereqs
+# hyperledger-fabric1.4-prereqs

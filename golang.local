@@ -1,0 +1,15 @@
+export GOPATH=$HOME/go
+export GOPATHBIN=$GOPATH/bin
+export GOROOT=/usr/lib/golang
+export GOBIN=$GOROOT/bin
+export PATH=${PATH}:$GOBIN:$GOPATHBIN
+source ~/.bash_profile
+mkdir go
+cd go
+mkdir src
+mkdir bin
+mkdir pkg
+cd src
+mkdir github.com
+cd github.com
+mkdir sunnysingh97g
