@@ -1,0 +1,32 @@
+#!/bin/bash
+#pre-reqs
+sudo yum -y clean all
+sudo yum -y update
+sudo yum install -y curl
+sudo yum install -y wget
+sudo yum install -y git
+sudo yum install -y yum-plugin-downloadonly
+sudo yum install -y yum-utils createrepo httpd
+sudo yum install -y epel-release
+sudo yum -y clean all
+sudo yum -y groupinstall "Development tools"
+sudo yum install -y device-mapper-persistent-data lvm2
+sudo yum install -y python2
+sudo yum install -y nodejs
+sudo yum-config-manager --add-repo   https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum install -y docker-ce docker-ce-cli containerd.io
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo usermod -aG docker $USER
+sudo yum install -y docker-compose
+sudo yum -y clean all
+sudo yum -y update
+#sudo yum -y install golang
+wget https://golang.org/dl/go1.14.4.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.14.4.linux-amd64.tar.gz
+mkdir -p go/{src,bin,pkg}
+sudo systemctl stop docker
+sudo systemctl disable docker
+sudo systemctl enable docker
+sudo systemctl start docker
+
