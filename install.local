@@ -1,4 +1,4 @@
-for i in $(ls *.rpm); do sudo rpm -ivhf --nodep $i >> install-rpm.log; done
+for i in $(ls *.rpm); do sudo rpm -ivhf --nodeps $i >> install-rpm.log; done
 for i in $(ls *.rpm); do sudo rpm -ivh $i >> install-rpm.log; done
 for i in $(ls *.rpm); do sudo yum install -y —-nodep $i >> install-nodep.log; done
 for i in $(ls *.rpm); do sudo yum reinstall -y $i >> reinstall.log; done
