@@ -1,0 +1,1 @@
+for i in $(docker images | awk '{print $1":"$2}');do docker save $i  >./k8s-images/$( echo $i | awk -F "/" '{print $2}').tar; done

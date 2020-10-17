@@ -1,0 +1,11 @@
+for i in $(ls *.rpm); do sudo rpm -ivhf --nodep $i >> install-rpm.log; done
+for i in $(ls *.rpm); do sudo rpm -ivh $i >> install-rpm.log; done
+for i in $(ls *.rpm); do sudo yum install -y —-nodep $i >> install-nodep.log; done
+for i in $(ls *.rpm); do sudo yum reinstall -y $i >> reinstall.log; done
+for i in $(ls *.rpm); do sudo yum install -y $i >> install.log; done
+
+for i in $(docker images | awk '{print $1":"$2}');do echo $i; done
+for i in $(docker images | awk '{print $1":"$2}');do echo $( echo $i | F”/“ ‘{print $1”:”$2}’); done
+for i in $(docker images | grep fabric | grep -v latest | awk '{print $1":"$2}'); do docker save $i > ./$(echo $i | awk -F"/" '{print $2}').tar; done
+
+

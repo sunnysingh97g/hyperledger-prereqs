@@ -1,8 +1,8 @@
 #sudo yum-config-manager --add-repo   https://download.docker.com/linux/centos/docker-ce.repo
 #sudo yum --nogpgcheck -y localinstall *.rpm
-mkdir /etc/docker
+sudo mkdir /etc/docker
 # Set up the Docker daemon
-cat << | sudo tee /etc/docker/daemon.json 
+cat <<  EOF | sudo tee /etc/docker/daemon.json 
 {
   "exec-opts": ["native.cgroupdriver=systemd"],
   "log-driver": "json-file",
@@ -15,7 +15,7 @@ cat << | sudo tee /etc/docker/daemon.json
   ]
 }
 EOF
-mkdir -p /etc/systemd/system/docker.service.d
+sudo mkdir -p /etc/systemd/system/docker.service.d
 sudo systemctl daemon-reload
 sudo systemctl stop docker
 sudo systemctl disable docker

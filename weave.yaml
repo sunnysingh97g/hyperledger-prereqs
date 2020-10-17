@@ -1,0 +1,4 @@
+code: Redirect
+message: >-
+  Moved permanently to `/k8s/v1.13/net.yaml`, returning config for Kubernetes
+  version v1.13, old location (`/k8s/net`) will be deprecated soon.

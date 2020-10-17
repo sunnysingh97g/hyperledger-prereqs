@@ -9,7 +9,7 @@ repo_gpgcheck=1
 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
 exclude=kubelet kubeadm kubectl
 EOF
-sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+#sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 sudo systemctl enable kubelet && sudo systemctl start kubelet
 
 sudo swapoff -a
@@ -72,6 +72,7 @@ curl https://docs.projectcalico.org/manifests/calico.yaml -O
 kubectl apply -f calico.yaml
 
 
+kubectl apply -f weave-net.yaml
 
 
 ###################################################
@@ -84,5 +85,5 @@ You should now deploy a pod network to the cluster.
 Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
   https://kubernetes.io/docs/concepts/cluster-administration/addons/
 Then you can join any number of worker nodes by running the following on each as root:
-kubeadm join 10.128.15.200:6443 --token taw7d9.73i1acb0kg1r4dmg \
-    --discovery-token-ca-cert-hash sha256:f581a7e7183740721bbeda209917b5c6690d5a585d22dfc757e1849f70b62807
+kubeadm join 10.128.15.203:6443 --token 287s6g.m67ach3rs5rwhpa7 \
+    --discovery-token-ca-cert-hash sha256:c2cdcc9918cab4b86b4917c9610f6da6b9e0c22182f181b3bcd21a8e57acc102
